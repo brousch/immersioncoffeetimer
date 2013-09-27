@@ -27,7 +27,7 @@ def play_tick(dt=0):
     SoundLoader.load('media/tick.wav').play()
 
 
-class CleverDripTimer(BoxLayout):
+class ImmersionCoffeeTimer(BoxLayout):
     timer_display = ObjectProperty(None)
     rest_timer = ObjectProperty(None)
     stir_timer = ObjectProperty(None)
@@ -39,7 +39,7 @@ class CleverDripTimer(BoxLayout):
     timer_is_running = False
 
     def __init__(self, **kwargs):
-        super(CleverDripTimer, self).__init__(**kwargs)
+        super(ImmersionCoffeeTimer, self).__init__(**kwargs)
         self.app = App.get_running_app()
         config = self.app.read_config()
         self.stir_time = config.getint('timer', 'stir_after')
@@ -65,7 +65,7 @@ class CleverDripTimer(BoxLayout):
 
     def _finish_timer(self):
         self.timer_is_running = False
-        notification.notify("Clever Drip Timer", "Coffee is ready.")
+        notification.notify("Immersion Coffee Timer", "Coffee is ready.")
         self.timer_display.text = "Done"
         alert(double_ding=True)
 
@@ -86,18 +86,18 @@ class CleverDripTimer(BoxLayout):
         self.app.write_config(self.stir_time, self.rest_time)
 
     def _stir_notification(self, dt):
-        notification.notify("Clever Drip Timer", "Time to stir the coffee.")
+        notification.notify("Immersion Coffee Timer", "Time to stir the coffee.")
         alert()
 
 
-class CleverDripTimerApp(App):
+class ImmersionCoffeeTimerApp(App):
 
     default_stir_time = 90
     default_rest_time = 240
     config_file_name = 'config.ini'
 
     def __init__(self, **kwargs):
-        super(CleverDripTimerApp, self).__init__(**kwargs)
+        super(ImmersionCoffeeTimerApp, self).__init__(**kwargs)
         self.config_file = os.path.join(self.user_data_dir,
                                         self.config_file_name)
 
@@ -121,9 +121,9 @@ class CleverDripTimerApp(App):
 
     def build(self):
         config = self.read_config()
-        return CleverDripTimer()
+        return ImmersionCoffeeTimer()
 
 
 if __name__ == '__main__':
-    app = CleverDripTimerApp()
+    app = ImmersionCoffeeTimerApp()
     app.run()
