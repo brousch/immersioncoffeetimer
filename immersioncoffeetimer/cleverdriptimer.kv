@@ -1,0 +1,117 @@
+#:kivy 1.7.2
+#:import os os
+#:import Factory kivy.factory.Factory
+
+#:set color_bg         (0.157, 0.090, 0.431, 1)
+#:set color_button     (0.973, 0.698, 0.518, 1)
+#:set color_icon_bg_lt (0.784, 0.443, 0.216, 1)
+#:set color_font       (0.957, 0.890, 0.843, 1)
+
+#:set font_size_title  "40sp"
+#:set font_size_button "20sp"
+#:set font_size_label  "16sp"
+#:set font_size_timer  "160sp"
+
+#:set pad 5
+
+<BrownSpinnerOption@SpinnerOption>:
+    font_size: font_size_button
+    height: self.texture_size[1] + (4 * sp(pad))
+    background_color: color_button
+    color: color_font
+
+<CleverDripTimer>:
+    orientation: "vertical"
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: os.path.join('media', 'dark_grounds.png')
+    padding: sp(pad), sp(pad)
+    
+    timer_display: timer_display
+    rest_timer: rest_timer
+    stir_timer: stir_timer
+    total_timer: total_timer
+    
+    Label:
+        text: "Immersion Coffee Timer"
+        font_size: font_size_title
+        height: self.texture_size[1] + (4 * root.padding[1])
+        size_hint: 1, None
+        color: color_font
+    GridLayout:
+        cols: 3
+        col_default_width: (root.width - (2 * root.padding[0])) / 3
+        col_force_default: True
+        height: stir_time_label.height + stir_timer.height + (2 * root.padding[1])
+        size_hint: 1, None
+        Label:
+            id: stir_time_label
+            text: "Stir after:"
+            font_size: font_size_label
+            halign: "right"
+            height: self.texture_size[1] + (2 * root.padding[1])
+            size_hint: 1, None
+            color: color_font
+        Label:
+            id: rest_time_label
+            text: "Then rest for:"
+            font_size: font_size_label
+            halign: "right"
+            height: self.texture_size[1] + (2 * root.padding[1])
+            size_hint: 1, None
+            color: color_font
+        Label:
+            id: total_time_label
+            text: "Total time:"
+            font_size: font_size_label
+            halign: "right"
+            height: self.texture_size[1] + (2 * root.padding[1])
+            size_hint: 1, None
+            color: color_font
+        Spinner:
+            id: stir_timer
+            text: root.format_timer(root.stir_time)
+            values: [root.format_timer(x) for x in range(0, 300, 30)]
+            font_size: font_size_button
+            height: self.texture_size[1] + (4 * root.padding[1])
+            size_hint: None, None
+            on_text: root._update_timers()
+            background_color: color_button
+            color: color_font
+            option_cls: Factory.get("BrownSpinnerOption")
+        Spinner:
+            id: rest_timer
+            text: root.format_timer(root.rest_time)
+            values: [root.format_timer(x) for x in range(0, 600, 30)]
+            font_size: font_size_button
+            height: self.texture_size[1] + (4 * root.padding[1])
+            size_hint: None, None
+            on_text: root._update_timers()
+            background_color: color_button
+            color: color_font
+            option_cls: Factory.get("BrownSpinnerOption")
+        Spinner:
+            id: total_timer
+            text: root.format_timer(root.total_time)
+            font_size: font_size_button
+            height: self.texture_size[1] + (4 * root.padding[1])
+            size_hint: None, None
+            background_color: color_button
+            color: color_font
+            option_cls: Factory.get("BrownSpinnerOption")
+    Button:
+        text: "Start Timer"
+        font_size: font_size_button
+        height: self.texture_size[1] + (4 * root.padding[1])
+        size_hint: 1, None
+        on_press: root.start_timer()
+        background_color: color_button
+        color: color_font
+    Label:
+        id: timer_display
+        text: root.format_timer(root.current_timer)
+        font_size: font_size_timer
+        color: color_font
+

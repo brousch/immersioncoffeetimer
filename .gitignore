@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+.buildozer
+bin
+buildozer
+venv
+.komodotools
+*.komodoproject
