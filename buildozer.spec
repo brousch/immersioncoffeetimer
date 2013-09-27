@@ -10,7 +10,7 @@ package.name = immersioncoffeetimer
 package.domain = com.feralrooster
 
 # (str) Source code where the main.py live
-source.dir = ./cleverdriptimer
+source.dir = ./immersioncoffeetimer
 
 # (list) Source files to include (let empty to include all the files)
 #source.include_exts = py,png,jpg,kv,atlas
@@ -77,7 +77,7 @@ android.ndk = 8e
 
 # (bool) Indicate whther to use private app file storage (True, default)
 # or SD card storage (False)
-android.private_storage = False
+android.private_storage = True
 
 # (str) Semicolon separated list of Java .jar files to add to the libs so
 # that pyjnius can access their classes. Don't add jars that you do not need,
