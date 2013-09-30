@@ -4,11 +4,12 @@
 
 #:set color_button_default_rgb (88, 88, 88)
 
-#:set color_bg         (0.157, 0.090, 0.431, 1)
-#:set color_button     (0.973, 0.698, 0.518, 1)  # 160,90,44
+#:set color_bg             (0.157, 0.090, 0.431, 1)
+#:set color_button         (0.973, 0.698, 0.518, 1)  # 160,90,44
 #:set color_button_pressed (0.659, 0.522, 0.431, 1)  # 80,45,22
-#:set color_icon_bg_lt (0.784, 0.443, 0.216, 1)
-#:set color_font       (0.957, 0.890, 0.843, 1)
+#:set color_icon_bg_lt     (0.784, 0.443, 0.216, 1)
+#:set color_font           (0.957, 0.890, 0.843, 1)
+#:set color_button_cancel  (0.957, 0.349, 0.259, 1)
 
 #:set font_size_title  "30sp"
 #:set font_size_button "20sp"
@@ -109,16 +110,29 @@
             background_down: 'atlas://data/images/defaulttheme/spinner'
             color: color_font
             option_cls: Factory.get("BrownSpinnerOption")
-    Button:
-        id: start_pause_resume_button
-        text: "Start Timer"
-        font_size: font_size_button
-        height: self.texture_size[1] + (4 * root.padding[1])
+    BoxLayout:
+        orientation: 'horizontal'
+        height: start_pause_resume_button.height
         size_hint: 1, None
-        on_press: root.start_pause_resume_timer()
-        background_color: color_button if self.state == 'normal' else color_button_pressed
-        background_down: 'atlas://data/images/defaulttheme/button'
-        color: color_font
+        Button:
+            id: start_pause_resume_button
+            text: "Start Timer"
+            font_size: font_size_button
+            height: self.texture_size[1] + (4 * root.padding[1])
+            size_hint: 0.9, None
+            on_press: root.start_pause_resume_timer()
+            background_color: color_button if self.state == 'normal' else color_button_pressed
+            background_down: 'atlas://data/images/defaulttheme/button'
+            color: color_font
+        Button:
+            text: "X"
+            font_size: font_size_button
+            height: start_pause_resume_button.height
+            size_hint: 0.1, None
+            on_press: root.cancel_timer()
+            background_color: color_button_cancel if self.state == 'normal' else color_button_pressed
+            background_down: 'atlas://data/images/defaulttheme/button'
+            color: color_font
     Label:
         id: timer_display
         text: root.format_timer(root.current_timer)

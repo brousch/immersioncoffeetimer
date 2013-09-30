@@ -65,6 +65,27 @@ class ImmersionCoffeeTimer(BoxLayout):
             self.timer_is_running = True
             self.start_pause_resume_button.text = "Pause Timer"
 
+    def pause_timer(self):
+        if self.timer_is_running:
+            self.timer_is_running = False
+            self.timer_is_paused = True
+            Clock.unschedule(self._decrement_timer)
+            Clock.unschedule(self._stir_notification)
+            self.app.write_config(pause=self.current_timer)
+            self.start_pause_resume_button.text = "Resume Timer"
+
+    def resume_timer(self):
+        if not self.timer_is_running:
+            config = self.app.read_config()
+            self.current_timer = config.getint('timer', 'paused_at')
+            self.clock_tick = Clock.schedule_interval(self._decrement_timer, 1)
+            if self.current_timer > self.stir_time:
+                self.clock_stir = Clock.schedule_once(self._stir_notification,
+                                                      self.current_timer - self.stir_time)
+            self.timer_is_running = True
+            self.timer_is_paused = False
+            self.start_pause_resume_button.text = "Pause Timer"
+
     def _decrement_timer(self, dt):
         play_tick()
         if self.current_timer > 1:
@@ -101,26 +122,13 @@ class ImmersionCoffeeTimer(BoxLayout):
         notification.notify("Immersion Coffee Timer", "Time to stir the coffee.")
         alert()
 
-    def pause_timer(self):
-        if self.timer_is_running:
-            self.timer_is_running = False
-            self.timer_is_paused = True
-            Clock.unschedule(self._decrement_timer)
-            Clock.unschedule(self._stir_notification)
-            self.app.write_config(pause=self.current_timer)
-            self.start_pause_resume_button.text = "Resume Timer"
-
-    def resume_timer(self):
-        if not self.timer_is_running:
-            config = self.app.read_config()
-            self.current_timer = config.getint('timer', 'paused_at')
-            self.clock_tick = Clock.schedule_interval(self._decrement_timer, 1)
-            if self.current_timer > self.stir_time:
-                self.clock_stir = Clock.schedule_once(self._stir_notification,
-                                                      self.current_timer - self.stir_time)
-            self.timer_is_running = True
-            self.timer_is_paused = False
-            self.start_pause_resume_button.text = "Pause Timer"
+    def cancel_timer(self):
+        self.timer_is_running = False
+        self.timer_is_paused = False
+        Clock.unschedule(self._decrement_timer)
+        Clock.unschedule(self._stir_notification)
+        self.current_timer = 0
+        self.start_pause_resume_button.text = "Start Timer"
 
 
 class ImmersionCoffeeTimerApp(App):
