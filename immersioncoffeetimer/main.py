@@ -71,7 +71,7 @@ class ImmersionCoffeeTimer(BoxLayout):
             self.timer_is_paused = True
             Clock.unschedule(self._decrement_timer)
             Clock.unschedule(self._stir_notification)
-            self.app.write_config(pause=self.current_timer)
+            self.app.write_config(None, None, self.current_timer)
             self.start_pause_resume_button.text = "Resume Timer"
 
     def resume_timer(self):
@@ -97,7 +97,10 @@ class ImmersionCoffeeTimer(BoxLayout):
 
     def _finish_timer(self):
         self.timer_is_running = False
-        notification.notify("Immersion Coffee Timer", "Coffee is ready.")
+        try:
+            notification.notify("Immersion Coffee Timer", "Coffee is ready.")
+        except NotImplementedError:
+            pass
         self.timer_display.text = "Done"
         alert(double_ding=True)
         self.start_pause_resume_button.text = "Start Timer"
@@ -119,7 +122,10 @@ class ImmersionCoffeeTimer(BoxLayout):
         self.app.write_config(self.stir_time, self.rest_time)
 
     def _stir_notification(self, dt):
-        notification.notify("Immersion Coffee Timer", "Time to stir the coffee.")
+        try:
+            notification.notify("Immersion Coffee Timer", "Time to stir the coffee.")
+        except NotImplementedError:
+            pass
         alert()
 
     def cancel_timer(self):
@@ -147,13 +153,29 @@ class ImmersionCoffeeTimerApp(App):
         if os.path.isfile(self.config_file):
             config.read(self.config_file)
         else:
-            config = self.write_config(self.default_stir_time,
-                                       self.default_rest_time)
+            config = self.write_config()
         return config
 
-    def write_config(self, stir=0, rest=0, pause=0):
+    def write_config(self, stir=None, rest=None, pause=None):
         config = ConfigParser.SafeConfigParser()
-        config.add_section('timer')
+        config.read(self.config_file)
+        if stir is None:
+            if config.has_option('timer', 'stir_after'):
+                stir = config.getint('timer', 'stir_after')
+            else:
+                stir = self.default_stir_time
+        if rest is None:
+            if config.has_option('timer', 'rest_for'):
+                rest = config.getint('timer', 'rest_for')
+            else:
+                rest = self.default_rest_time
+        if pause is None:
+            if config.has_option('timer', 'paused_at'):
+                pause = config.getint('timer', 'paused_at')
+            else:
+                pause = 0
+        if not config.has_section('timer'):
+            config.add_section('timer')
         config.set('timer', 'stir_after', str(stir))
         config.set('timer', 'rest_for', str(rest))
         config.set('timer', 'paused_at', str(pause))
