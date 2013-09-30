@@ -123,6 +123,12 @@ class ImmersionCoffeeTimerApp(App):
         config = self.read_config()
         return ImmersionCoffeeTimer()
 
+    def on_pause(self):
+        return True
+
+    def on_resume(self):
+        pass
+
 
 if __name__ == '__main__':
     app = ImmersionCoffeeTimerApp()
