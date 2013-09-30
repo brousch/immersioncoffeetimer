@@ -2,8 +2,11 @@
 #:import os os
 #:import Factory kivy.factory.Factory
 
+#:set color_button_default_rgb (88, 88, 88)
+
 #:set color_bg         (0.157, 0.090, 0.431, 1)
-#:set color_button     (0.973, 0.698, 0.518, 1)
+#:set color_button     (0.973, 0.698, 0.518, 1)  # 160,90,44
+#:set color_button_pressed (0.659, 0.522, 0.431, 1)  # 80,45,22
 #:set color_icon_bg_lt (0.784, 0.443, 0.216, 1)
 #:set color_font       (0.957, 0.890, 0.843, 1)
 
@@ -17,7 +20,8 @@
 <BrownSpinnerOption@SpinnerOption>:
     font_size: font_size_button
     height: self.texture_size[1] + (4 * sp(pad))
-    background_color: color_button
+    background_color: color_button if self.state == 'down' else color_button_pressed
+    background_down: 'atlas://data/images/defaulttheme/button'
     color: color_font
 
 <ImmersionCoffeeTimer>:
@@ -78,7 +82,8 @@
             height: self.texture_size[1] + (4 * root.padding[1])
             size_hint: None, None
             on_text: root._update_timers()
-            background_color: color_button
+            background_color: color_button if self.state == 'normal' else color_button_pressed
+            background_down: 'atlas://data/images/defaulttheme/spinner'
             color: color_font
             option_cls: Factory.get("BrownSpinnerOption")
         Spinner:
@@ -89,7 +94,8 @@
             height: self.texture_size[1] + (4 * root.padding[1])
             size_hint: None, None
             on_text: root._update_timers()
-            background_color: color_button
+            background_color: color_button if self.state == 'normal' else color_button_pressed
+            background_down: 'atlas://data/images/defaulttheme/spinner'
             color: color_font
             option_cls: Factory.get("BrownSpinnerOption")
         Spinner:
@@ -98,7 +104,8 @@
             font_size: font_size_button
             height: self.texture_size[1] + (4 * root.padding[1])
             size_hint: None, None
-            background_color: color_button
+            background_color: color_button if self.state == 'normal' else color_button_pressed
+            background_down: 'atlas://data/images/defaulttheme/spinner'
             color: color_font
             option_cls: Factory.get("BrownSpinnerOption")
     Button:
@@ -107,7 +114,8 @@
         height: self.texture_size[1] + (4 * root.padding[1])
         size_hint: 1, None
         on_press: root.start_timer()
-        background_color: color_button
+        background_color: color_button if self.state == 'normal' else color_button_pressed
+        background_down: 'atlas://data/images/defaulttheme/button'
         color: color_font
     Label:
         id: timer_display
