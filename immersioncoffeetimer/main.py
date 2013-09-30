@@ -37,6 +37,7 @@ class ImmersionCoffeeTimer(BoxLayout):
     rest_time = NumericProperty(0)
     total_time = NumericProperty(0)
     timer_is_running = False
+    timer_is_paused = False
 
     def __init__(self, **kwargs):
         super(ImmersionCoffeeTimer, self).__init__(**kwargs)
@@ -46,6 +47,15 @@ class ImmersionCoffeeTimer(BoxLayout):
         self.rest_time = config.getint('timer', 'rest_for')
         self.total_time = self.stir_time + self.rest_time
 
+    def start_pause_resume_timer(self):
+        if self.timer_is_running:
+            self.pause_timer()
+        else:
+            if self.timer_is_paused:
+                self.resume_timer()
+            else:
+                self.start_timer()
+
     def start_timer(self):
         if not self.timer_is_running:
             self.current_timer = self.stir_time + self.rest_time
@@ -53,6 +63,7 @@ class ImmersionCoffeeTimer(BoxLayout):
             Clock.schedule_interval(self._decrement_timer, 1)
             Clock.schedule_once(self._stir_notification, self.stir_time)
             self.timer_is_running = True
+            self.start_pause_resume_button.text = "Pause Timer"
 
     def _decrement_timer(self, dt):
         play_tick()
@@ -68,6 +79,7 @@ class ImmersionCoffeeTimer(BoxLayout):
         notification.notify("Immersion Coffee Timer", "Coffee is ready.")
         self.timer_display.text = "Done"
         alert(double_ding=True)
+        self.start_pause_resume_button.text = "Start Timer"
 
     def format_timer(self, sec):
         minutes, seconds = divmod(sec, 60)
@@ -88,6 +100,27 @@ class ImmersionCoffeeTimer(BoxLayout):
     def _stir_notification(self, dt):
         notification.notify("Immersion Coffee Timer", "Time to stir the coffee.")
         alert()
+
+    def pause_timer(self):
+        if self.timer_is_running:
+            self.timer_is_running = False
+            self.timer_is_paused = True
+            Clock.unschedule(self._decrement_timer)
+            Clock.unschedule(self._stir_notification)
+            self.app.write_config(pause=self.current_timer)
+            self.start_pause_resume_button.text = "Resume Timer"
+
+    def resume_timer(self):
+        if not self.timer_is_running:
+            config = self.app.read_config()
+            self.current_timer = config.getint('timer', 'paused_at')
+            self.clock_tick = Clock.schedule_interval(self._decrement_timer, 1)
+            if self.current_timer > self.stir_time:
+                self.clock_stir = Clock.schedule_once(self._stir_notification,
+                                                      self.current_timer - self.stir_time)
+            self.timer_is_running = True
+            self.timer_is_paused = False
+            self.start_pause_resume_button.text = "Pause Timer"
 
 
 class ImmersionCoffeeTimerApp(App):
@@ -110,11 +143,12 @@ class ImmersionCoffeeTimerApp(App):
                                        self.default_rest_time)
         return config
 
-    def write_config(self, stir, rest):
+    def write_config(self, stir=0, rest=0, pause=0):
         config = ConfigParser.SafeConfigParser()
         config.add_section('timer')
         config.set('timer', 'stir_after', str(stir))
         config.set('timer', 'rest_for', str(rest))
+        config.set('timer', 'paused_at', str(pause))
         with open(self.config_file, 'wb') as cf:
             config.write(cf)
         return config

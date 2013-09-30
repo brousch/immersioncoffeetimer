@@ -37,6 +37,7 @@
     rest_timer: rest_timer
     stir_timer: stir_timer
     total_timer: total_timer
+    start_pause_resume_button: start_pause_resume_button
     
     Label:
         text: "Immersion Coffee Timer"
@@ -109,11 +110,12 @@
             color: color_font
             option_cls: Factory.get("BrownSpinnerOption")
     Button:
+        id: start_pause_resume_button
         text: "Start Timer"
         font_size: font_size_button
         height: self.texture_size[1] + (4 * root.padding[1])
         size_hint: 1, None
-        on_press: root.start_timer()
+        on_press: root.start_pause_resume_timer()
         background_color: color_button if self.state == 'normal' else color_button_pressed
         background_down: 'atlas://data/images/defaulttheme/button'
         color: color_font
