@@ -129,6 +129,7 @@ class ImmersionCoffeeTimer(BoxLayout):
         alert()
 
     def cancel_timer(self):
+        SoundLoader.load('media/cancel.wav').play()
         self.timer_is_running = False
         self.timer_is_paused = False
         Clock.unschedule(self._decrement_timer)
