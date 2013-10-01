@@ -5,6 +5,7 @@ pip install --upgrade cython
 hg clone https://bitbucket.org/pygame/pygame
 cd pygame
 python setup.py build
+python setup.py install
 sudo python setup.py install
 cd ..
 rm -rf pygame

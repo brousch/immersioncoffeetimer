@@ -14,7 +14,7 @@ from kivy.uix.boxlayout import BoxLayout
 
 from plyer import notification
 
-__version__ = '0.1.1'
+__version__ = '0.2'
 
 
 def alert(dt=0, double_ding=False):
